@@ -706,28 +706,28 @@ export default function Quiz() {
   const bestEvent = showResults ? calculateBestEvent() : undefined;
 
   return (
-    <div className="container mx-auto p-4 flex flex-col items-center">
+    <div className="fbla-container flex flex-col items-center sm:p-6">
       <Image
         src="/fbla-logo.svg"
         alt="FBLA Logo"
-        width={200}
+        width={100}
         height={200}
-        className="mb-4"
+        className="mb-6"
       />
-      <h1 className="text-3xl font-bold mb-4">FBLA Event Quiz</h1>
+      <h1>FBLA Event Quiz</h1>
       {!showResults ? (
         <div className="flex flex-col gap-4">
           {Object.entries(quizQuestions).map(([questionKey, question]) => (
-            <div key={questionKey} className="border p-4 rounded-lg w-[600px]">
-              <h2 className="text-xl mb-2">{question.text}</h2>
+            <div key={questionKey} className="quiz-card">
+              <h2 className="quiz-question">{question.text}</h2> 
               <div className="flex gap-2">
                 {Object.keys(question.options).map(option => (
-                  <button
+                  <button 
                     key={option}
+                    className={`quiz-option ${
+                      answers[question.text] === option ? 'selected' : ''
+                    }`} 
                     onClick={() => handleAnswer(question.text, option)}
-                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                      answers[question.text] === option ? 'opacity-100' : 'opacity-50'
-                    }`}
                   >
                     {option}
                   </button>
@@ -735,36 +735,36 @@ export default function Quiz() {
               </div>
             </div>
           ))}
-          {error && <p className="text-red-500">{error}</p>}
-          <button onClick={handleSubmit} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+          {error && <p className="text-red-500">{error}</p>} 
+          <button onClick={handleSubmit} className="primary-button"> 
             Submit Quiz
           </button>
         </div>
       ) : bestEvent ? (
-        <div className="text-center w-[600px]">
-          <h2 className="text-2xl font-semibold mb-2">Based on Your Answers, You Might Enjoy:</h2>
-          <h3 className='font-bold text-xl'>{bestEvent.name}</h3>
-          <p className="mb-4">{bestEvent.description}</p>
-          <h4 className='font-semibold'>Skills Involved:</h4>
-          <ul className="list-disc list-inside mb-4">
+        <div className="result-card">
+          <h2>Based on Your Answers, You Might Enjoy:</h2>
+          <h3 className='event-title'>{bestEvent.name}</h3> 
+          <p className="event-description">{bestEvent.description}</p>
+          <h3>Skills Involved:</h3>
+          <ul className="list-disc list-inside">
             {bestEvent.skills.map((skill, index) => (
               <li key={index}>{skill}</li>
             ))}
           </ul>
-          <h4 className='font-semibold'>Activities:</h4>
-          <ul className="list-disc list-inside mb-4">
+          <h3>Activities:</h3>
+          <ul className="list-disc list-inside">
             {bestEvent.activities.map((activity, index) => (
               <li key={index}>{activity}</li>
             ))}
           </ul>
-          <h4 className='font-semibold'>Potential Careers:</h4>
-          <ul className="list-disc list-inside mb-4">
+          <h3>Potential Careers:</h3>
+          <ul className="list-disc list-inside">
             {bestEvent.careers.map((career, index) => (
               <li key={index}>{career}</li>
             ))}
           </ul>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => window.open("https://www.fbla.org/", "_blank")}>
-            Visit FBLA Website
+          <button className="secondary-button" onClick={() => window.open("https://www.fbla.org/", "_blank")}>
+            Visit FBLA Website 
           </button>
         </div>
       ) : <div className='text-red-500'>Something went wrong please try again later</div>}
