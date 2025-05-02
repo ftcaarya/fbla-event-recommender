@@ -720,41 +720,80 @@ export default function Quiz() {
 
   const calculateBestEvent = () => {
     const categoryScores: { [key: string]: number } = {};
+    const categoryMaxScores: { [key: string]: number } = {};
     
-    // Calculate weighted scores for each category
+    // Calculate weighted scores for each category and track maximum possible scores
     Object.entries(quizQuestions).forEach(([_, question]) => {
       const answer = answers[question.text];
       if (answer) {
         const score = question.options[answer] * question.weight;
         categoryScores[question.category] = (categoryScores[question.category] || 0) + score;
       }
+      
+      // Track maximum possible score for this category
+      const maxOptionScore = Math.max(...Object.values(question.options)) * question.weight;
+      categoryMaxScores[question.category] = (categoryMaxScores[question.category] || 0) + maxOptionScore;
     });
 
-    // Normalize scores
-    const maxPossibleScore = Object.values(quizQuestions).reduce((sum, q) => sum + (3 * q.weight), 0);
+    // Calculate normalized scores (as percentages of maximum possible scores)
     const normalizedScores = Object.entries(categoryScores).map(([category, score]) => ({
       category,
-      score: score / maxPossibleScore
+      score: categoryMaxScores[category] > 0 ? score / categoryMaxScores[category] : 0,
+      rawScore: score
     }));
 
-    // Find events that match the user's strongest categories
-    const relevantEvents = events.filter(event => {
-      const eventScore = normalizedScores.reduce((sum, { category, score }) => {
-        return sum + (event.requirements[category] || 0) * score;
-      }, 0);
-      return eventScore > 0.6; // Only include events that match at least 60% of requirements
+    // Sort categories by normalized score to find user's strengths
+    const sortedStrengths = [...normalizedScores].sort((a, b) => b.score - a.score);
+    
+    // Calculate match scores for all events
+    const eventMatches = events.map(event => {
+      // Calculate weighted match score based on how well event requirements match user strengths
+      let matchScore = 0;
+      let relevanceScore = 0;
+      
+      // For each category the event requires
+      Object.entries(event.requirements).forEach(([reqCategory, reqWeight]) => {
+        // Find user's score in this category
+        const userCategoryScore = normalizedScores.find(s => s.category === reqCategory);
+        if (userCategoryScore) {
+          // Add to match score, weighted by both requirement importance and user's strength
+          matchScore += userCategoryScore.score * reqWeight;
+          relevanceScore += reqWeight; // Track total weight of requirements
+        }
+      });
+      
+      // Normalize match score by dividing by sum of requirement weights
+      const normalizedMatchScore = relevanceScore > 0 ? matchScore / relevanceScore : 0;
+      
+      // Calculate a bonus for matching user's top strengths
+      const topStrengthBonus = sortedStrengths.length > 0 && 
+        event.requirements[sortedStrengths[0].category] ? 0.15 : 0;
+      
+      return {
+        event,
+        score: normalizedMatchScore + topStrengthBonus
+      };
     });
 
     // Sort events by match score
-    relevantEvents.sort((a, b) => {
-      const scoreA = normalizedScores.reduce((sum, { category, score }) => 
-        sum + (a.requirements[category] || 0) * score, 0);
-      const scoreB = normalizedScores.reduce((sum, { category, score }) => 
-        sum + (b.requirements[category] || 0) * score, 0);
-      return scoreB - scoreA;
-    });
-
-    return relevantEvents[0] || events[Math.floor(Math.random() * events.length)];
+    eventMatches.sort((a, b) => b.score - a.score);
+    
+    // Return the best match, or if no good matches (score < 0.3), find an event that matches user's top strength
+    if (eventMatches.length > 0 && eventMatches[0].score >= 0.3) {
+      return eventMatches[0].event;
+    } else if (sortedStrengths.length > 0) {
+      // Find events matching user's top category
+      const topCategory = sortedStrengths[0].category;
+      const topCategoryEvents = events.filter(event => event.requirements[topCategory]);
+      
+      if (topCategoryEvents.length > 0) {
+        // Return a random event from user's top category
+        return topCategoryEvents[Math.floor(Math.random() * topCategoryEvents.length)];
+      }
+    }
+    
+    // Fallback: return a random event
+    return events[Math.floor(Math.random() * events.length)];
   };
 
   const handleSubmit = () => {

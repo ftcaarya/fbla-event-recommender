@@ -1,30 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# FBLA Event Recommender
 
-## Getting Started
+The FBLA Event Recommender is an interactive web application designed to help FBLA (Future Business Leaders of America) members discover their perfect competitive event based on their interests, skills, and preferences.
 
-First, run the development server:
+## What It Does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This application uses an advanced matching system to recommend FBLA competitive events that align with users' personal strengths and career interests. Through a series of targeted questions, the system analyzes user responses and matches them with the most suitable FBLA events.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Key features include:
+- Interactive quiz with personalized questions
+- Advanced matching algorithm based on weighted responses
+- Detailed event recommendations with descriptions
+- Information about skills developed through each event
+- Related career paths for each recommended event
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+The application helps FBLA members make informed decisions about which competitive events to participate in, potentially improving their competitive experience and career exploration.
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Technology
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+This is a [Next.js](https://nextjs.org) project featuring:
+- React for the frontend interface
+- TypeScript for type safety
+- Tailwind CSS for responsive design
+- Gradient UI for modern aesthetics
 
-Ensure your current directory is correct. When using create-next/react/vue apps, they generate a new folder containing essential files like package.json. Always navigate into this folder using `cd` before running `npm run dev`.
+## Creator
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This application was created by Aarya Raut.
 
 ## Learn More
 
@@ -34,9 +35,3 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
